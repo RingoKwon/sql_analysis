@@ -63,40 +63,39 @@ WITH token_balance_sUSDC AS (
   SELECT
     address,
     'sUSDC' AS type,
-    SUM(cum_date_2310) AS cum_date_2310,
-    SUM(cum_date_2311) AS cum_date_2311,
-    SUM(cum_date_2312) AS cum_date_2312,
-    SUM(cum_date_2401) AS cum_date_2401,
-    SUM(cum_date_2402) AS cum_date_2402,
-    SUM(cum_date_2403) AS cum_date_2403,
-    SUM(cum_date_2404) AS cum_date_2404,
-    SUM(cum_date_2405) AS cum_date_2405,
-    SUM(cum_date_2406) AS cum_date_2406,
-    SUM(cum_date_2407) AS cum_date_2407,
-    SUM(cum_date_2408) AS cum_date_2408,
-    SUM(cum_date_2409) AS cum_date_2409,
-    SUM(cum_date_2410) AS cum_date_2410,
-    SUM(amount) AS balance
+    sum(case when cum_date_2310 = 1 then amount end)  AS cum_date_2310,
+    sum(case when cum_date_2311 = 1 then amount end)  AS cum_date_2311,
+    sum(case when cum_date_2312 = 1 then amount end)  AS cum_date_2312,
+    sum(case when cum_date_2401 = 1 then amount end)  AS cum_date_2401,
+    sum(case when cum_date_2402 = 1 then amount end)  AS cum_date_2402,
+    sum(case when cum_date_2403 = 1 then amount end)  AS cum_date_2403,
+    sum(case when cum_date_2404 = 1 then amount end)  AS cum_date_2404,
+    sum(case when cum_date_2405 = 1 then amount end)  AS cum_date_2405,
+    sum(case when cum_date_2406 = 1 then amount end)  AS cum_date_2406,
+    sum(case when cum_date_2407 = 1 then amount end)  AS cum_date_2407,
+    sum(case when cum_date_2408 = 1 then amount end)  AS cum_date_2408,
+    sum(case when cum_date_2409 = 1 then amount end)  AS cum_date_2409,
+    sum(case when cum_date_2410 = 1 then amount end)  AS cum_date_2410
+    
   FROM token_union
   GROUP BY
     1,2 
 )
 SELECT
   type,
-  count( distinct CASE WHEN cum_date_2310 = 1  THEN address END ) AS cum_date_2310,
-  count( distinct CASE WHEN cum_date_2311 = 1 THEN address END ) AS cum_date_2311,
-  count( distinct CASE WHEN cum_date_2312 = 1 THEN address END ) AS cum_date_2312,
-  count( distinct CASE WHEN cum_date_2401 = 1 THEN address END ) AS cum_date_2401,
-  count( distinct CASE WHEN cum_date_2402 = 1 THEN address END ) AS cum_date_2402,
-  count( distinct CASE WHEN cum_date_2403 = 1 THEN address END ) AS cum_date_2403,
-  count( distinct CASE WHEN cum_date_2404 = 1 THEN address END ) AS cum_date_2404,
-  count( distinct CASE WHEN cum_date_2405 = 1 THEN address END ) AS cum_date_2405,
-  count( distinct CASE WHEN cum_date_2406 = 1 THEN address END ) AS cum_date_2406,
-  count( distinct CASE WHEN cum_date_2407 = 1 THEN address END ) AS cum_date_2407,
-  count( distinct CASE WHEN cum_date_2408 = 1 THEN address END ) AS cum_date_2408,
-  count( distinct CASE WHEN cum_date_2409 = 1 THEN address END ) AS cum_date_2409,
-  count( distinct CASE WHEN cum_date_2410 = 1 THEN address END ) AS cum_date_2410
-
+  count( distinct case when cum_date_2310 > 0 then address end ) AS cum_holders_2310,
+  count( distinct case when cum_date_2311 > 0 then address end ) AS cum_holders_2311,
+  count( distinct case when cum_date_2312 > 0 then address end ) AS cum_holders_2312,
+  count( distinct case when cum_date_2401 > 0 then address end ) AS cum_holders_2401,
+  count( distinct case when cum_date_2402 > 0 then address end ) AS cum_holders_2402,
+  count( distinct case when cum_date_2403 > 0 then address end ) AS cum_holders_2403,
+  count( distinct case when cum_date_2404 > 0 then address end ) AS cum_holders_2404,
+  count( distinct case when cum_date_2405 > 0 then address end ) AS cum_holders_2405,
+  count( distinct case when cum_date_2406 > 0 then address end ) AS cum_holders_2406,
+  count( distinct case when cum_date_2407 > 0 then address end ) AS cum_holders_2407,
+  count( distinct case when cum_date_2408 > 0 then address end ) AS cum_holders_2408,
+  count( distinct case when cum_date_2409 > 0 then address end ) AS cum_holders_2409,
+  count( distinct case when cum_date_2410 > 0 then address end ) AS cum_holders_2410
 FROM token_holders
 WHERE 1=1 
 GROUP BY
