@@ -1,33 +1,36 @@
-with token_balances as (
-    select -- tokens sold
-        -sum(cast(value as double) / pow(10, b.decimals)) as amount
-        , "from" as address
-    from erc20_ethereum.evt_Transfer a
-    join tokens.erc20 b on a.contract_address = b.contract_address
-    group by 2
-    
-    union all
-    
-    select -- tokens bought
-        sum(cast(value as double) / pow(10, b.decimals)) as amount
-        , a.to as address
-    from erc20_ethereum.evt_Transfer a
-    join tokens.erc20 b on a.contract_address = b.contract_address
-    
-    group by 2
-),
-
-
-token_holders as (
-    select
-        address
-        , sum(amount) as balance
-    from token_balances
-    group by 1
+-- https://dune.com/queries/4230552/7116791
+WITH token_balances AS (
+  SELECT
+    -SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
+    "from" AS address
+  FROM erc20_ethereum.evt_Transfer AS a
+  JOIN tokens.erc20 AS b
+    ON a.contract_address = b.contract_address
+  WHERE
+    1 = 1 AND a.contract_address = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+  GROUP BY
+    2
+  UNION ALL
+  SELECT
+    SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
+    a.to AS address
+  FROM erc20_ethereum.evt_Transfer AS a
+  JOIN tokens.erc20 AS b
+    ON a.contract_address = b.contract_address
+  WHERE
+    1 = 1 AND a.contract_address = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+  GROUP BY
+    2
+), token_holders AS (
+  SELECT
+    address,
+    SUM(amount) AS balance
+  FROM token_balances
+  GROUP BY
+    1
 )
-select 
-count ( distinct address) as holder_cnt 
-from token_holders
-where 1=1 
-    and balance >0 ; 
-    
+SELECT
+  COUNT(DISTINCT address) AS holder_cnt
+FROM token_holders
+WHERE
+  1 = 1 AND balance > 0
