@@ -13,35 +13,23 @@ USDY : 0x96F6eF951840721AdBF46Ac996b59E0235CB985C
 sUSDE : 0x9D39A5DE30e57443BfF2A8307A4256c8797A3497
 deUSD : 0x15700B564Ca08D9439C58cA5053166E8317aa138
 */
-<<<<<<< HEAD
 WITH token_balance_2310 AS (
-=======
-
-WITH token_balances_usdc AS (
-<<<<<<< HEAD
->>>>>>> parent of fd0b11b (error fix)
-=======
->>>>>>> parent of fd0b11b (error fix)
   SELECT
     -SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
-    "from" AS address,
-    'USDC' AS symbol,
-    'Stablecoin' AS token_type
-<<<<<<< HEAD
+    "from" AS address
   FROM erc20_ethereum.evt_Transfer AS a
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
   WHERE
     1 = 1
     AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
+    AND a.evt_block_time >= CAST('2023-11-01' AS TIMESTAMP)
   GROUP BY
     2
   UNION ALL
   SELECT
     SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
-    a.to AS address,
-    'USDC' AS symbol,
-    'Stablecoin' AS token_type
+    a.to AS address
   FROM erc20_ethereum.evt_Transfer AS a
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
@@ -55,8 +43,6 @@ WITH token_balances_usdc AS (
   SELECT
     SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
     "from" AS address
-=======
->>>>>>> parent of fd0b11b (error fix)
   FROM erc20_ethereum.evt_Transfer AS a
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
@@ -69,9 +55,7 @@ WITH token_balances_usdc AS (
   UNION ALL
   SELECT
     SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
-    a.to AS address,
-    'USDC' AS symbol,
-    'Stablecoin' AS token_type
+    a.to AS address
   FROM erc20_ethereum.evt_Transfer AS a
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
@@ -106,52 +90,21 @@ WITH token_balances_usdc AS (
 ), token_holders AS (
   SELECT
     address,
-    symbol,
-    token_type,
     SUM(amount) AS balance
-<<<<<<< HEAD
   FROM token_balance_2310
   GROUP BY
     1
   UNION ALL
   SELECT
     address,
-    symbol,
-    token_type,
     SUM(amount) AS balance
-<<<<<<< HEAD
   FROM token_balance_2311
-=======
-=======
->>>>>>> parent of fd0b11b (error fix)
-  FROM (
-    SELECT
-      *
-    FROM token_balances_usdc
-    UNION ALL
-    SELECT
-      *
-    FROM token_balances_usdt
-    UNION ALL
-    SELECT
-      *
-    FROM token_balances_dai
-  ) AS token_balances
-<<<<<<< HEAD
->>>>>>> parent of fd0b11b (error fix)
-=======
->>>>>>> parent of fd0b11b (error fix)
   GROUP BY
-    1, 2, 3
+    1
 )
 SELECT
-  symbol,
-  token_type,
   COUNT(DISTINCT address) AS holder_cnt
 FROM token_holders
 WHERE
   1 = 1 AND balance > 0
-GROUP BY
-  1, 2
-ORDER BY
   1, 2;
