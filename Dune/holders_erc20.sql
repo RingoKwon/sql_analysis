@@ -14,7 +14,7 @@ sUSDE : 0x9D39A5DE30e57443BfF2A8307A4256c8797A3497
 deUSD : 0x15700B564Ca08D9439C58cA5053166E8317aa138
 */
 
-WITH token_balance AS (
+WITH token_balance_2310 AS (
   SELECT
     -SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
     "from" AS address
@@ -23,6 +23,7 @@ WITH token_balance AS (
     ON a.contract_address = b.contract_address
   WHERE
     1 = 1 AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
+    and a.evt_block_time >= '2023-11-01'
   GROUP BY
     2
   UNION ALL
@@ -34,14 +35,68 @@ WITH token_balance AS (
     ON a.contract_address = b.contract_address
   WHERE
     1 = 1 AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
+    and a.evt_block_time >= '2023-11-01'
   GROUP BY
     2
-)
+), token_balance_2311 AS (
+    SELECT
+    SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
+    "from" AS address
+  FROM erc20_ethereum.evt_Transfer AS a
+  JOIN tokens.erc20 AS b
+    ON a.contract_address = b.contract_address
+  WHERE
+    1 = 1 AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
+    and a.evt_block_time >= '2023-12-01'
+  GROUP BY
+    2
+  UNION ALL
+  SELECT
+    SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
+    a.to AS address
+  FROM erc20_ethereum.evt_Transfer AS a
+  JOIN tokens.erc20 AS b
+    ON a.contract_address = b.contract_address
+  WHERE
+    a.evt_block_time >= '2023-12-01'
+  GROUP BY
+    2
+), token_balance_2312 AS (
+    SELECT
+    SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
+    "from" AS address
+  FROM erc20_ethereum.evt_Transfer AS a
+  JOIN tokens.erc20 AS b
+    ON a.contract_address = b.contract_address
+  WHERE
+    1 = 1 AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
+    and a.evt_block_time >= '2024-01-01'
+  GROUP BY
+    2
+  UNION ALL
+  SELECT
+    SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
+    a.to AS address
+  FROM erc20_ethereum.evt_Transfer AS a
+  JOIN tokens.erc20 AS b
+    ON a.contract_address = b.contract_address
+  WHERE
+    a.evt_block_time >= '2024-01-01'
+  GROUP BY
+    2
+) 
 , token_holders AS (
   SELECT
     address,
     SUM(amount) AS balance
-  FROM token_balance
+  FROM token_balance_2310
+  GROUP BY
+    1
+  UNION ALL
+  SELECT
+    address,
+    SUM(amount) AS balance
+  FROM token_balance_2311
   GROUP BY
     1
 )
