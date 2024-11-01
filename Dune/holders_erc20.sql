@@ -13,10 +13,17 @@ USDY : 0x96F6eF951840721AdBF46Ac996b59E0235CB985C
 sUSDE : 0x9D39A5DE30e57443BfF2A8307A4256c8797A3497
 deUSD : 0x15700B564Ca08D9439C58cA5053166E8317aa138
 */
+<<<<<<< HEAD
 WITH token_balance_2310 AS (
+=======
+
+WITH token_balances_usdc AS (
+>>>>>>> parent of fd0b11b (error fix)
   SELECT
     -SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
-    "from" AS address
+    "from" AS address,
+    'USDC' AS symbol,
+    'Stablecoin' AS token_type
   FROM erc20_ethereum.evt_Transfer AS a
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
@@ -28,7 +35,9 @@ WITH token_balance_2310 AS (
   UNION ALL
   SELECT
     SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
-    a.to AS address
+    a.to AS address,
+    'USDC' AS symbol,
+    'Stablecoin' AS token_type
   FROM erc20_ethereum.evt_Transfer AS a
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
@@ -89,7 +98,10 @@ WITH token_balance_2310 AS (
 ), token_holders AS (
   SELECT
     address,
+    symbol,
+    token_type,
     SUM(amount) AS balance
+<<<<<<< HEAD
   FROM token_balance_2310
   GROUP BY
     1
@@ -98,11 +110,32 @@ WITH token_balance_2310 AS (
     address,
     SUM(amount) AS balance
   FROM token_balance_2311
+=======
+  FROM (
+    SELECT
+      *
+    FROM token_balances_usdc
+    UNION ALL
+    SELECT
+      *
+    FROM token_balances_usdt
+    UNION ALL
+    SELECT
+      *
+    FROM token_balances_dai
+  ) AS token_balances
+>>>>>>> parent of fd0b11b (error fix)
   GROUP BY
-    1
+    1, 2, 3
 )
 SELECT
+  symbol,
+  token_type,
   COUNT(DISTINCT address) AS holder_cnt
 FROM token_holders
 WHERE
   1 = 1 AND balance > 0
+GROUP BY
+  1, 2
+ORDER BY
+  1, 2;
