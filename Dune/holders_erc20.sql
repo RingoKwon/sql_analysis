@@ -13,7 +13,6 @@ USDY : 0x96F6eF951840721AdBF46Ac996b59E0235CB985C
 sUSDE : 0x9D39A5DE30e57443BfF2A8307A4256c8797A3497
 deUSD : 0x15700B564Ca08D9439C58cA5053166E8317aa138
 */
-
 WITH token_balance_2310 AS (
   SELECT
     -SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
@@ -22,8 +21,8 @@ WITH token_balance_2310 AS (
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
   WHERE
-    1 = 1 AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
-    and a.evt_block_time >= '2023-11-01'
+    1 = 1
+    AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
   GROUP BY
     2
   UNION ALL
@@ -34,20 +33,22 @@ WITH token_balance_2310 AS (
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
   WHERE
-    1 = 1 AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
-    and a.evt_block_time >= '2023-11-01'
+    1 = 1
+    AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
+    AND a.evt_block_time >= CAST('2023-11-01' AS TIMESTAMP)
   GROUP BY
     2
 ), token_balance_2311 AS (
-    SELECT
+  SELECT
     SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
     "from" AS address
   FROM erc20_ethereum.evt_Transfer AS a
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
   WHERE
-    1 = 1 AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
-    and a.evt_block_time >= '2023-12-01'
+    1 = 1
+    AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
+    AND a.evt_block_time >= CAST('2023-12-01' AS TIMESTAMP)
   GROUP BY
     2
   UNION ALL
@@ -58,19 +59,20 @@ WITH token_balance_2310 AS (
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
   WHERE
-    a.evt_block_time >= '2023-12-01'
+    a.evt_block_time >= CAST('2023-12-01' AS TIMESTAMP)
   GROUP BY
     2
 ), token_balance_2312 AS (
-    SELECT
+  SELECT
     SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
     "from" AS address
   FROM erc20_ethereum.evt_Transfer AS a
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
   WHERE
-    1 = 1 AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
-    and a.evt_block_time >= '2024-01-01'
+    1 = 1
+    AND a.contract_address = FROM_HEX('A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
+    AND a.evt_block_time >= CAST('2024-01-01' AS TIMESTAMP)
   GROUP BY
     2
   UNION ALL
@@ -81,11 +83,10 @@ WITH token_balance_2310 AS (
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
   WHERE
-    a.evt_block_time >= '2024-01-01'
+    a.evt_block_time >= CAST('2024-01-01' AS TIMESTAMP)
   GROUP BY
     2
-) 
-, token_holders AS (
+), token_holders AS (
   SELECT
     address,
     SUM(amount) AS balance
