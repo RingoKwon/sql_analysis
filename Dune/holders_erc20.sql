@@ -29,7 +29,6 @@ WITH token_balances AS (
   GROUP BY
     1
 )
-
 SELECT
   COUNT(DISTINCT address) AS holder_cnt
 FROM token_holders
