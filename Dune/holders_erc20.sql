@@ -18,12 +18,16 @@ WITH token_balance_2310 AS (
 =======
 
 WITH token_balances_usdc AS (
+<<<<<<< HEAD
+>>>>>>> parent of fd0b11b (error fix)
+=======
 >>>>>>> parent of fd0b11b (error fix)
   SELECT
     -SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
     "from" AS address,
     'USDC' AS symbol,
     'Stablecoin' AS token_type
+<<<<<<< HEAD
   FROM erc20_ethereum.evt_Transfer AS a
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
@@ -51,6 +55,8 @@ WITH token_balances_usdc AS (
   SELECT
     SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
     "from" AS address
+=======
+>>>>>>> parent of fd0b11b (error fix)
   FROM erc20_ethereum.evt_Transfer AS a
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
@@ -63,7 +69,9 @@ WITH token_balances_usdc AS (
   UNION ALL
   SELECT
     SUM(TRY_CAST(value AS DOUBLE) / POWER(10, b.decimals)) AS amount,
-    a.to AS address
+    a.to AS address,
+    'USDC' AS symbol,
+    'Stablecoin' AS token_type
   FROM erc20_ethereum.evt_Transfer AS a
   JOIN tokens.erc20 AS b
     ON a.contract_address = b.contract_address
@@ -108,9 +116,14 @@ WITH token_balances_usdc AS (
   UNION ALL
   SELECT
     address,
+    symbol,
+    token_type,
     SUM(amount) AS balance
+<<<<<<< HEAD
   FROM token_balance_2311
 =======
+=======
+>>>>>>> parent of fd0b11b (error fix)
   FROM (
     SELECT
       *
@@ -124,6 +137,9 @@ WITH token_balances_usdc AS (
       *
     FROM token_balances_dai
   ) AS token_balances
+<<<<<<< HEAD
+>>>>>>> parent of fd0b11b (error fix)
+=======
 >>>>>>> parent of fd0b11b (error fix)
   GROUP BY
     1, 2, 3
