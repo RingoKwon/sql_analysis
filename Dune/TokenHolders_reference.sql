@@ -7,17 +7,19 @@ my : https://dune.com/queries/4235366?token_address_t6c1ea=0xA0b86991c6218b36c1d
 WITH transfer_events AS (
     SELECT date_trunc('day',evt_block_time) as date,
            tr."from" AS address,
-           -(tr.value/1e18) AS amount
+           -(tr.value/power(10, t.decimals)) AS amount
     FROM erc20_{{chain}}.evt_transfer tr
+    LEFT JOIN tokens.erc20 t ON tr.contract_address = t.contract_address
     WHERE "from" != 0x0000000000000000000000000000000000000000
-    AND contract_address = {{token_address}}
+    AND tr.contract_address = {{token_address}}
     UNION ALL
     SELECT date_trunc('day',evt_block_time) as date,
            tr."to" AS address,
-           (tr.value/1e18) AS amount
+           (tr.value/power(10, t.decimals)) AS amount
     FROM erc20_{{chain}}.evt_transfer tr
+    LEFT JOIN tokens.erc20 t ON tr.contract_address = t.contract_address
     WHERE "to" != 0x0000000000000000000000000000000000000000
-    AND contract_address = {{token_address}}
+    AND tr.contract_address = {{token_address}}
 ),
 
 user_balance AS (
@@ -47,7 +49,7 @@ getUserDailyBalance as (
            daily_cumulative_balance
     FROM setLeadData g
     INNER JOIN gs ON g.date <= gs.date AND gs.date < g.latest_day
-    WHERE daily_cumulative_balance > 1/1e12
+    WHERE daily_cumulative_balance > 0.000001
 )
 
 SELECT date,
